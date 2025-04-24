@@ -1,0 +1,5 @@
+[package]
+org = "amanda"
+name = "m2m_scope_filter"
+version = "0.1.0"
+distribution = "2201.9.0"
