@@ -1,6 +1,4 @@
 import ballerina/http;
-import ballerina/log;
-import ballerina/lang.runtime;
 
 service / on new http:Listener(9090) {
 
