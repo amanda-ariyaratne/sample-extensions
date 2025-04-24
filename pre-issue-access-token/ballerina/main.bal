@@ -5,9 +5,16 @@ import ballerina/lang.runtime;
 service / on new http:Listener(9090) {
 
     resource function post filter(http:Caller caller, http:Request req) returns error? {
-        json body = check req.getJsonPayload();
-        string actionType = body?.actionType.toString();
-        string grantType = body?.event?.request?.grantType.toString();
+        json bodyJson = check req.getJsonPayload();
+        map<json> body = <map<json>>bodyJson;
+        
+        string actionType = body["actionType"].toString();
+        map<json> event = <map<json>>body["event"];
+        map<json> request = <map<json>>event["request"];
+        string grantType = request["grantType"].toString();
+
+        map<json> accessToken = <map<json>> event["accessToken"];
+        json[] existingScopes = <json[]> accessToken["scopes"];
 
         string CLIENT_CREDENTIALS_GRANT_TYPE = "client_credentials";
         string ALLOWED_SCOPE = "read:metrics";
@@ -26,8 +33,6 @@ service / on new http:Listener(9090) {
         }
 
         if grantType == CLIENT_CREDENTIALS_GRANT_TYPE {
-            json[] existingScopes = body?.event?.accessToken?.scopes ?: [];
-
             json[] operations = [];
             int index = 0;
             foreach var scope in existingScopes {
